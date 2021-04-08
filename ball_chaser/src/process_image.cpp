@@ -34,26 +34,31 @@ void process_image_callback(const sensor_msgs::Image img)
 
     int ballX = 0;
     int imgSize = img.height * img.width;
-    int whiteSum = 3 * white_pixel;
+    int r_pix = 0;
+    int g_pix = 0;
+    int b_pix = 0;
 
-    for(int i = 0; i < imgSize; ++i)
+    for(int i = 0; i < imgSize; ++i)    //Go through image data which stored sequinatlly in array. Size of array is (imgSize x 3 channel)
     {
-        int pixSum = img.data[i*3] + img.data[i*3+1] + img.data[i*3+2];
-        if(pixSum == whiteSum) 
+        r_pix = img.data[i*3];  //Read RGB pixels from image data array
+        g_pix = img.data[i*3 + 1];
+        b_pix = img.data[i*3 + 2];
+
+        if((r_pix == white_pixel) && (g_pix == white_pixel) && (b_pix == white_pixel)) //If each channel R,G and B equal to 255 white color set X position of the ball
         {
-            ballX = i % img.width;
+            ballX = i % img.width; //Set X position of the ball
             ROS_INFO_STREAM("White pixel X = " << ballX);
             break;
         }
     }
-
-    if(ballX == 0) //waiting for ball
+    //Check X position of the ball and send command to service
+    if(ballX == 0) //waiting for ball there are no ball in camera view
         drive_robot(0.0, 0.0);
-    else if((ballX > 0) && (ballX < img.width / 3))
+    else if((ballX > 0) && (ballX < img.width / 3)) //ball is on the left part of camera view 
         drive_robot(0.0, 0.05);    
-    else if(ballX < (int)(img.width * 2.0/3.0))
+    else if(ballX < (int)(img.width * 2.0/3.0)) //ball is in the  middle of camera view
         drive_robot(0.1, 0.0);
-    else
+    else    //ball in the right part ob view
         drive_robot(0.0, -0.05);
    
 }
