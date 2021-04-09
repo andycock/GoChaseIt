@@ -32,7 +32,7 @@ void process_image_callback(const sensor_msgs::Image img)
     // Depending on the white ball position, call the drive_bot function and pass velocities to it
     // Request a stop when there's no white ball seen by the camera
 
-    int ballX = 0;
+    int ballX = -1;
     int imgSize = img.height * img.width;
     int r_pix = 0;
     int g_pix = 0;
@@ -52,14 +52,14 @@ void process_image_callback(const sensor_msgs::Image img)
         }
     }
     //Check X position of the ball and send command to service
-    if(ballX == 0) //waiting for ball there are no ball in camera view
+    if(ballX == -1) //waiting for ball there are no ball in camera view
         drive_robot(0.0, 0.0);
-    else if((ballX > 0) && (ballX < img.width / 3)) //ball is on the left part of camera view 
-        drive_robot(0.0, 0.05);    
+    else if((ballX > -1) && (ballX < img.width / 3)) //ball is on the left part of camera view 
+        drive_robot(0.0, 0.1);    
     else if(ballX < (int)(img.width * 2.0/3.0)) //ball is in the  middle of camera view
-        drive_robot(0.1, 0.0);
+        drive_robot(0.2, 0.0);
     else    //ball in the right part ob view
-        drive_robot(0.0, -0.05);
+        drive_robot(0.0, -0.1);
    
 }
 

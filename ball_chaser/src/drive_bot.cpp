@@ -14,17 +14,6 @@ bool handle_drive_request(ball_chaser::DriveToTarget::Request& req, ball_chaser:
 
     ROS_INFO("DriveToTargetRequest received - linear_x:%1.2f, angular_z:%1.2f", (float)req.linear_x, (float)req.angular_z);
 
-    // Check if requested joint angles are in the safe zone, otherwise clamp them
-    // std::vector<float> joints_angles = clamp_at_boundaries(req.joint_1, req.joint_2);
-
-    // Publish clamped joint angles to the robot
-    // std_msgs::Float64 linear_x, angular_z;
-
-    // linear_x.data = (float)req.linear_x;
-    // angular_z.data = (float)req.angular_z;
-
-    // joint1_pub.publish(joint1_angle);
-    // joint2_pub.publish(joint2_angle);
     // Create a motor_command object of type geometry_msgs::Twist
     geometry_msgs::Twist motor_command;
     // Set wheel velocities, forward [0.5, 0.0]
@@ -32,9 +21,7 @@ bool handle_drive_request(ball_chaser::DriveToTarget::Request& req, ball_chaser:
     motor_command.angular.z = (float)req.angular_z;
     // Publish angles to drive the robot
     motor_command_publisher.publish(motor_command);
-    // Wait 3 seconds for robot to settle
-    ros::Duration(3).sleep();
-
+   
     // Return a response message
     res.msg_feedback = "Robot  set - linear_x: " + std::to_string((float)req.linear_x) + " , angular_z: " + std::to_string((float)req.angular_z);
     ROS_INFO_STREAM(res.msg_feedback);
